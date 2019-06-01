@@ -5,7 +5,7 @@ import re
 # Regex
 embed_regex = re.compile(r'(https:/|http:/)(/.*?/)(embed/)?(.*)')
 embed_check_regex = re.compile(r'(https:/|http:/)(/.*?/)(embed/)(.*)')
-uploadedTo_ref_regex = re.compile(r'(https:/|http:/)(/.*?)(\?ref=\d*)?')
+uploadedTo_ref_regex = re.compile(r'(https://|http://)([^?^\n]*)')
 uploadedTo_ref_check_regex = re.compile(r'(https:/|http:/)(/.*?)(\?ref=\d*)')
 site_name_regex = re.compile(r'(https://|http://)(www.)?(.*?)/')
 
@@ -14,9 +14,11 @@ text = str(pyperclip.paste())
 
 matches = []
 
+site_name = site_name_regex.search(text).group(3)
 # site_name = site_name_regex.findall(text)
-for groups in site_name_regex.findall(text):
-    site_name = ''.join([groups[2]])
+# for groups in site_name_regex.findall(text):
+#     site_name = ''.join([groups[1]])
+#     print(site_name)
 
 if embed_check_regex.findall(text):
     for groups in embed_regex.findall(text):
@@ -27,6 +29,7 @@ if embed_check_regex.findall(text):
         print('Done, embed links found for %s, total count: %s ' % (site_name, len(matches)))
 elif uploadedTo_ref_check_regex.findall(text):
     for groups in uploadedTo_ref_regex.findall(text):
+        print(groups)
         clear_link = ''.join([groups[0], groups[1]])
         print(clear_link)
         matches.append(clear_link)
@@ -34,5 +37,5 @@ elif uploadedTo_ref_check_regex.findall(text):
         pyperclip.copy('\n'.join(matches))
         print('Done, uploadedTo ref links found for %s, total count: %s ' % (site_name, len(matches)))
 else:
-    print('No links found')
+    print('No convertable links found for %s' % site_name)
 
